@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation"
+    app:startDestination="@id/framgent_github">
+
+    <fragment
+        android:id="@+id/framgent_github"
+        android:name="com.jeff.architecture_mvvm.view.github.GitHubFragment" />
+</navigation>
