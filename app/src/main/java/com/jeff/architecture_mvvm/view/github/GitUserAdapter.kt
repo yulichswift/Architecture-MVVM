@@ -4,14 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
-import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.ItemUserInfoBinding
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
 
-class GitUserAdapter : PagedListAdapter<UserItem, RecyclerView.ViewHolder>(DiffCallback) {
+class GitUserAdapter : PagingDataAdapter<UserItem, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         val DiffCallback = object : DiffUtil.ItemCallback<UserItem>() {

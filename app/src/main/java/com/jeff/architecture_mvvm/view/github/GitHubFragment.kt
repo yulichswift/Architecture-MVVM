@@ -6,9 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.FragmentGithubBinding
 import com.jeff.architecture_mvvm.util.autoCleared
 import com.jeff.architecture_mvvm.view.base.BaseFragment
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
@@ -28,7 +32,22 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
         binding.toolbarLayout.setCollapsedTitleTextColor(Color.BLUE)
 
         binding.toolbar.setNavigationOnClickListener {
-            
+
+        }
+
+        binding.toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_refresh -> {
+                    viewModel.refresh()
+                    //binding.recyclerView.scrollToPosition(0)
+                    true
+                }
+                R.id.action_trash -> {
+                    viewModel.clear()
+                    true
+                }
+                else -> false
+            }
         }
 
         userAdapter = GitUserAdapter()
@@ -36,17 +55,19 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
         binding.recyclerView.adapter = userAdapter
 
         binding.layoutRefresh.setOnRefreshListener {
-            viewModel.getUsers()
+            viewModel.refresh()
         }
 
         viewModel.processing.observe(viewLifecycleOwner, Observer {
             binding.layoutRefresh.isRefreshing = it
         })
 
-        viewModel.userListData.observe(viewLifecycleOwner, Observer {
-            userAdapter.submitList(it)
-        })
+        lifecycleScope.launch {
+            viewModel.getPageList().collectLatest {
+                userAdapter.submitData(lifecycle, it)
+            }
+        }
 
-        viewModel.getUsers()
+        viewModel.initLoad()
     }
 }

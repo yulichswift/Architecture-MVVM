@@ -5,4 +5,4 @@
 - Retrofit
 - LiveData
 - Navigation
-- Paging2
+- Paging3

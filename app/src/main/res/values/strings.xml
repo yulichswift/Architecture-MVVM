@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Architecture-MVVM</string>
-    <string name="text_table_recycler_view">RecyclerView (GitHub API)</string>
+    <string name="text_table_recycler_view">Paging3</string>
+    <string name="text_more">More</string>
 </resources>
