@@ -1,7 +1,9 @@
 package com.jeff.architecture_mvvm.view.github
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.LayoutRes
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -9,10 +11,10 @@ import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.ItemUserInfoBinding
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
 
-class UserInfoListAdapter : PagedListAdapter<UserItem, RecyclerView.ViewHolder>(diffCallback) {
+class GitUserAdapter : PagedListAdapter<UserItem, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
-        val diffCallback = object : DiffUtil.ItemCallback<UserItem>() {
+        val DiffCallback = object : DiffUtil.ItemCallback<UserItem>() {
             override fun areItemsTheSame(oldItem: UserItem, newItem: UserItem): Boolean {
                 return oldItem.id == newItem.id
             }
@@ -23,16 +25,20 @@ class UserInfoListAdapter : PagedListAdapter<UserItem, RecyclerView.ViewHolder>(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserInfoViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.item_user_info, parent, false)
-        return UserInfoViewHolder(ItemUserInfoBinding.bind(view))
+    private fun inflateView(viewGroup: ViewGroup, @LayoutRes viewType: Int): View {
+        val layoutInflater = LayoutInflater.from(viewGroup.context)
+        return layoutInflater.inflate(viewType, viewGroup, false)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitUserViewHolder {
+        val view = inflateView(parent, R.layout.item_user_info)
+        return GitUserViewHolder(ItemUserInfoBinding.bind(view))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         getItem(position)?.also {
             when (holder) {
-                is UserInfoViewHolder -> holder.bindTo(it)
+                is GitUserViewHolder -> holder.bindTo(it)
             }
         }
     }

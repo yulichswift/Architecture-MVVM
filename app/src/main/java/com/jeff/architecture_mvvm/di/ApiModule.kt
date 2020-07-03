@@ -17,7 +17,7 @@ val apiModule = module {
     single { provideApiRepository(get()) }
 }
 
-fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
+private fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
     val httpLoggingInterceptor = HttpLoggingInterceptor()
     httpLoggingInterceptor.level = when (BuildConfig.DEBUG) {
         true -> HttpLoggingInterceptor.Level.BODY
@@ -26,7 +26,7 @@ fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
     return httpLoggingInterceptor
 }
 
-fun provideOkHttpClient(
+private fun provideOkHttpClient(
     httpLoggingInterceptor: HttpLoggingInterceptor
 ): OkHttpClient {
     return OkHttpClient.Builder()
@@ -37,7 +37,7 @@ fun provideOkHttpClient(
         .build()
 }
 
-fun provideApiService(okHttpClient: OkHttpClient): ApiService {
+private fun provideApiService(okHttpClient: OkHttpClient): ApiService {
     return Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
@@ -46,6 +46,6 @@ fun provideApiService(okHttpClient: OkHttpClient): ApiService {
         .create(ApiService::class.java)
 }
 
-fun provideApiRepository(apiService: ApiService): ApiRepository {
+private fun provideApiRepository(apiService: ApiService): ApiRepository {
     return ApiRepository(apiService)
 }

@@ -3,7 +3,6 @@ package com.jeff.architecture_mvvm.model.api.vo
 import com.google.gson.annotations.SerializedName
 
 data class UserItem(
-
     @SerializedName("login")
     val login: String? = null,
 

@@ -15,7 +15,7 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
 
     private val viewModel by viewModel<GitHubViewModel>()
 
-    private var infoAdapter by autoCleared<UserInfoListAdapter>()
+    private var userAdapter by autoCleared<GitUserAdapter>()
 
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentGithubBinding {
         return FragmentGithubBinding.inflate(inflater, container, false)
@@ -28,12 +28,12 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
         binding.toolbarLayout.setCollapsedTitleTextColor(Color.BLUE)
 
         binding.toolbar.setNavigationOnClickListener {
-
+            
         }
 
-        infoAdapter = UserInfoListAdapter()
+        userAdapter = GitUserAdapter()
 
-        binding.recyclerView.adapter = infoAdapter
+        binding.recyclerView.adapter = userAdapter
 
         binding.layoutRefresh.setOnRefreshListener {
             viewModel.getUsers()
@@ -44,7 +44,7 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
         })
 
         viewModel.userListData.observe(viewLifecycleOwner, Observer {
-            infoAdapter.submitList(it)
+            userAdapter.submitList(it)
         })
 
         viewModel.getUsers()

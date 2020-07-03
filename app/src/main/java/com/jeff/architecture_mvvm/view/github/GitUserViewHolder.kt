@@ -11,7 +11,7 @@ import com.jeff.architecture_mvvm.model.api.vo.UserItem
 import com.jeff.architecture_mvvm.view.base.BaseAnyViewHolder
 import com.log.JFLog
 
-class UserInfoViewHolder(private val binding: ItemUserInfoBinding) : BaseAnyViewHolder<UserItem>(binding.root) {
+class GitUserViewHolder(private val binding: ItemUserInfoBinding) : BaseAnyViewHolder<UserItem>(binding.root) {
 
     private val shapeArray = SparseArray<ShapeAppearanceModel>().also {
         // 未處理
