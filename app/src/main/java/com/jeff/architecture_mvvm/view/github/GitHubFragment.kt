@@ -11,6 +11,7 @@ import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.FragmentGithubBinding
 import com.jeff.architecture_mvvm.util.autoCleared
 import com.jeff.architecture_mvvm.view.base.BaseFragment
+import com.log.JFLog
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,6 +45,9 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
                 }
                 R.id.action_trash -> {
                     viewModel.clear()
+
+                    // 在View清空的方法
+                    //userAdapter.submitData(lifecycle, PagingData.empty())
                     true
                 }
                 else -> false
@@ -63,7 +67,9 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
         })
 
         lifecycleScope.launch {
-            viewModel.getPageList().collectLatest {
+            //viewModel.getPageList().collectLatest {
+            viewModel.getSimplePageList().collectLatest {
+                JFLog.d("Submit: $it")
                 userAdapter.submitData(lifecycle, it)
             }
         }

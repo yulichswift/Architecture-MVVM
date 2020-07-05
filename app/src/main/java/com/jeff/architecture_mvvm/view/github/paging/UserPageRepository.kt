@@ -6,17 +6,24 @@ import androidx.paging.PagingData
 import com.jeff.architecture_mvvm.callback.PagingCallback
 import com.jeff.architecture_mvvm.model.api.ApiRepository
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
-import com.log.JFLog
+import com.jeff.architecture_mvvm.paging.PagingChannelData
+import com.jeff.architecture_mvvm.paging.PagingRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 class UserPageRepository(
-    private val apiRepository: ApiRepository,
-    private val pagingConfig: PagingConfig,
-    private val pagingCallback: PagingCallback
-) {
-
-    fun passArgument(argument: String): Flow<PagingData<UserItem>> {
-        JFLog.d("Pass: $argument")
-        return Pager(pagingConfig) { UserDataSource(apiRepository, pagingCallback, pagingConfig.pageSize) }.flow
+    private val apiRepository: ApiRepository, private val pagingConfig: PagingConfig, private val pagingCallback: PagingCallback
+) : PagingRepository<UserItem>() {
+    override fun postData(data: PagingChannelData): Flow<PagingData<UserItem>> {
+        return when (data) {
+           PagingChannelData.Clear -> flowOf(PagingData.empty())
+           PagingChannelData.Load -> Pager(pagingConfig) {
+                UserDataSource(
+                    apiRepository,
+                    pagingCallback,
+                    pagingConfig.pageSize
+                )
+            }.flow
+        }
     }
 }

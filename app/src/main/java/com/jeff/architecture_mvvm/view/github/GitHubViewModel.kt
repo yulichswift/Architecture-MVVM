@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import com.jeff.architecture_mvvm.callback.PagingCallback
 import com.jeff.architecture_mvvm.model.api.ApiRepository
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
+import com.jeff.architecture_mvvm.paging.PagingChannelData
 import com.jeff.architecture_mvvm.view.base.BaseViewModel
 import com.jeff.architecture_mvvm.view.github.paging.UserPageRepository
 import com.log.JFLog
@@ -17,35 +18,30 @@ class GitHubViewModel : BaseViewModel() {
     private val apiRepository: ApiRepository by inject()
 
     private val clearListChannel = Channel<Unit>(Channel.CONFLATED)
-    private val requestChannel = Channel<String>(Channel.CONFLATED)
+
+    private val requestChannel = Channel<PagingChannelData>(Channel.CONFLATED)
 
     fun initLoad() {
-        requestChannel.offer("initLoad")
+        requestChannel.offer(PagingChannelData.Load)
     }
 
     fun refresh() {
-        requestChannel.offer("refresh")
+        requestChannel.offer(PagingChannelData.Load)
     }
 
     fun clear() {
-        clearListChannel.offer(Unit)
+        requestChannel.offer(PagingChannelData.Clear)
+        // clearListChannel.offer(Unit)
     }
 
     private val pagingConfig = PagingConfig(
         /**
-         * 初始化加載數量，默認為 pageSize * 3
+         * initialLoadSize 預設為 pageSize * 3
          */
         initialLoadSize = 30,
-
-        // 每頁顯示的數據的大小
         pageSize = 30,
-
-        // 開啟佔位符
         enablePlaceholders = true,
-
-        // 預刷新的距離，距離最後一個 item 多遠時加載數據
         prefetchDistance = 3,
-
         maxSize = 200
     )
 
@@ -69,15 +65,23 @@ class GitHubViewModel : BaseViewModel() {
         }
     }
 
-    private val getUserRepository by lazy { UserPageRepository(apiRepository, pagingConfig, callback) }
+    private val gitPagingRepository by lazy { UserPageRepository(apiRepository, pagingConfig, callback) }
 
+    fun getSimplePageList() = requestChannel.consumeAsFlow().flatMapLatest {
+        gitPagingRepository.postData(it)
+    }
+
+    /**
+     * 多個Channel
+     * 宣告一個Channel, 接收清空指令.
+     */
     fun getPageList() =
         flowOf(
             clearListChannel.consumeAsFlow().map {
                 PagingData.empty<UserItem>()
             },
             requestChannel.consumeAsFlow().flatMapLatest {
-                getUserRepository.passArgument(it)
+                gitPagingRepository.postData(it)
             }
         ).flattenMerge(2)
 }
