@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion 29
@@ -62,12 +64,6 @@ dependencies {
     implementation rootProject.ext.dependencies["lifecycle_runtime"]
     implementation rootProject.ext.dependencies["lifecycle_common"]
 
-    implementation rootProject.ext.dependencies["koin_core"]
-    implementation rootProject.ext.dependencies["koin_core_ext"]
-    implementation rootProject.ext.dependencies["koin_scope"]
-    implementation rootProject.ext.dependencies["koin_viewmodel"]
-    implementation rootProject.ext.dependencies["koin_ext"]
-
     implementation rootProject.ext.dependencies["jflog"]
     implementation rootProject.ext.dependencies["rounded_views"]
 
@@ -94,4 +90,15 @@ dependencies {
     implementation rootProject.ext.dependencies["navigation_ui"]
 
     implementation rootProject.ext.dependencies["stetho"]
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:$hilt_androidx_version"
+    kapt "androidx.hilt:hilt-compiler:$hilt_androidx_version"
+
+    // Hilt testing
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    kaptAndroidTest "androidx.hilt:hilt-compiler:$hilt_androidx_version"
 }

@@ -1,6 +1,6 @@
 # MVVM Architecture
 - MVVM
-- Koin
+- Hilt
 - Coroutines
 - Retrofit
 - LiveData

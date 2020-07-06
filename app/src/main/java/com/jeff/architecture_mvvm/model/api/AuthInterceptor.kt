@@ -3,14 +3,9 @@ package com.jeff.architecture_mvvm.model.api
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import org.koin.core.KoinComponent
-import org.koin.core.inject
 import java.net.HttpURLConnection
 
-class AuthInterceptor : Interceptor, KoinComponent {
-
-    private val apiRepository: ApiRepository by inject()
-
+class AuthInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
 
         val response = chain.proceed(chain.buildRequest())

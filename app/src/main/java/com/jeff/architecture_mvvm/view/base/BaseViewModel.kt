@@ -4,9 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.*
-import org.koin.core.KoinComponent
 
-abstract class BaseViewModel : ViewModel(), KoinComponent {
+abstract class BaseViewModel : ViewModel() {
     private val _processing by lazy { MutableLiveData<Boolean>() }
     val processing: LiveData<Boolean> get() = _processing
     fun updateProcessing(isProcessing: Boolean) {

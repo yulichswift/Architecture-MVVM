@@ -13,13 +13,15 @@ import com.jeff.architecture_mvvm.databinding.FragmentGithubBinding
 import com.jeff.architecture_mvvm.util.autoCleared
 import com.jeff.architecture_mvvm.view.base.BaseFragment
 import com.log.JFLog
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
 
-    private val viewModel: GitHubViewModel by viewModels()
+    private val viewModel by viewModels<GitHubViewModel>()
 
     private var userAdapter by autoCleared<GitUserAdapter>()
 
