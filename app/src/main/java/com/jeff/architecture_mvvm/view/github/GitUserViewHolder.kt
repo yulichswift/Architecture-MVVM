@@ -8,10 +8,10 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.ItemUserInfoBinding
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
-import com.jeff.architecture_mvvm.view.base.BaseAnyViewHolder
+import com.jeff.architecture_mvvm.view.base.BaseViewHolder
 import com.log.JFLog
 
-class GitUserViewHolder(private val binding: ItemUserInfoBinding) : BaseAnyViewHolder<UserItem>(binding.root) {
+class GitUserViewHolder(private val binding: ItemUserInfoBinding) : BaseViewHolder<UserItem>(binding.root) {
 
     private val shapeArray = SparseArray<ShapeAppearanceModel>().also {
         // 未處理
@@ -26,11 +26,13 @@ class GitUserViewHolder(private val binding: ItemUserInfoBinding) : BaseAnyViewH
 
     init {
         binding.root.setOnClickListener {
-            JFLog.d("OnClick: $data")
+            JFLog.d("OnClick: $storedData")
         }
     }
 
-    override fun updated() {
+    override fun bindTo(data: UserItem?) {
+        super.bindTo(data)
+
         // 方法1: 處理ImageView外框, 呈現圓形.
         binding.ivAvatar.shapeAppearanceModel = shapeArray[adapterPosition % 3]
 
