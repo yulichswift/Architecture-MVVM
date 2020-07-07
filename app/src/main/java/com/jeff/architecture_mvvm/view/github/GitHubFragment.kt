@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.jeff.architecture_mvvm.R
@@ -15,11 +16,10 @@ import com.log.JFLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
 
-    private val viewModel by viewModel<GitHubViewModel>()
+    private val viewModel: GitHubViewModel by viewModels()
 
     private var userAdapter by autoCleared<GitUserAdapter>()
 
