@@ -12,6 +12,7 @@ import com.jeff.architecture_mvvm.databinding.FragmentGithubBinding
 import com.jeff.architecture_mvvm.util.autoCleared
 import com.jeff.architecture_mvvm.view.base.BaseFragment
 import com.log.JFLog
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -66,7 +67,11 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
             binding.layoutRefresh.isRefreshing = it
         })
 
-        lifecycleScope.launch {
+        val exceptionHandler = CoroutineExceptionHandler { _, e ->
+            JFLog.e(e)
+        }
+
+        lifecycleScope.launch(exceptionHandler) {
             //viewModel.getPageList().collectLatest {
             viewModel.getSimplePageList().collectLatest {
                 JFLog.d("Submit: $it")
