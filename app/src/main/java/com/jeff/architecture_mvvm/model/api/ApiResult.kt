@@ -1,14 +1,30 @@
 package com.jeff.architecture_mvvm.model.api
 
-sealed class ApiResult<out T : Any> {
-    data class Success<out T : Any>(val data: T) : ApiResult<T>()
-    data class Failure<out T : Any>(val data: T) : ApiResult<T>()
-    sealed class Error(val exception: Exception) : ApiResult<Nothing>() {
-        class GeneralError(exception: Exception) : Error(exception)
-        class RuntimeError(exception: RuntimeException) : Error(exception)
+sealed class ApiResult<T> {
+    companion object {
+        fun <T> loading(): ApiResult<T> {
+            return Loading()
+        }
+
+        fun <T> loaded(): ApiResult<T> {
+            return Loaded()
+        }
+
+        fun <T> error(throwable: Throwable): ApiResult<T> {
+            return Error(throwable)
+        }
+
+        fun <T> success(result: T?): ApiResult<T> {
+            return when (result) {
+                null -> SuccessNoContent()
+                else -> Success(result)
+            }
+        }
     }
 
-    object SuccessEmpty : ApiResult<Nothing>()
-    object Loading : ApiResult<Nothing>()
-    object Loaded : ApiResult<Nothing>()
+    class Loading<T> : ApiResult<T>()
+    class Loaded<T> : ApiResult<T>()
+    class Error<T>(val exception: Throwable) : ApiResult<T>()
+    class SuccessNoContent<T> : ApiResult<T>()
+    data class Success<T>(val data: T) : ApiResult<T>()
 }
