@@ -25,14 +25,14 @@ class GitUserAdapter : PagingDataAdapter<UserItem, RecyclerView.ViewHolder>(Diff
         }
     }
 
-    private fun inflateView(viewGroup: ViewGroup, @LayoutRes viewType: Int): View {
-        val layoutInflater = LayoutInflater.from(viewGroup.context)
-        return layoutInflater.inflate(viewType, viewGroup, false)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitUserViewHolder {
+        val view = inflateWithLayout(parent, R.layout.item_user_info)
+        return GitUserViewHolder(ItemUserInfoBinding.bind(view))
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GitUserViewHolder {
-        val view = inflateView(parent, R.layout.item_user_info)
-        return GitUserViewHolder(ItemUserInfoBinding.bind(view))
+    private fun inflateWithLayout(viewGroup: ViewGroup, @LayoutRes layoutRes: Int): View {
+        val layoutInflater = LayoutInflater.from(viewGroup.context)
+        return layoutInflater.inflate(layoutRes, viewGroup, false)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
