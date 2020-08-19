@@ -67,7 +67,7 @@ class GitHubViewModel : BaseViewModel() {
 
     private val gitPagingRepository by lazy { UserPageRepository(apiRepository, pagingConfig, callback) }
 
-    fun getSimplePageList() = requestChannel.consumeAsFlow().flatMapLatest {
+    fun getSimplePageList() = requestChannel.receiveAsFlow().flatMapLatest {
         gitPagingRepository.postData(it)
     }
 
