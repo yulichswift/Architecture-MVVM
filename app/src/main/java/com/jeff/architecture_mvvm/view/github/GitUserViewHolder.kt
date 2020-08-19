@@ -34,7 +34,7 @@ class GitUserViewHolder(private val binding: ItemUserInfoBinding) : BaseViewHold
         super.bindTo(data)
 
         // 方法1: 處理ImageView外框, 呈現圓形.
-        binding.ivAvatar.shapeAppearanceModel = shapeArray[adapterPosition % 3]
+        binding.ivAvatar.shapeAppearanceModel = shapeArray[absoluteAdapterPosition % 3]
 
         // user avatar
         Glide.with(itemView.context)
