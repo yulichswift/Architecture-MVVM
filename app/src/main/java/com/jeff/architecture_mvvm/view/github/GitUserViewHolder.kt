@@ -41,7 +41,7 @@ class GitUserViewHolder(private val binding: ItemUserInfoBinding) : BaseViewHold
             .load(data?.avatarUrl)
             // 方法2: 使用Glide將圖片轉為圓形
             //.apply(RequestOptions.circleCropTransform())
-            .placeholder(R.mipmap.ic_launcher)
+            .placeholder(R.mipmap.ic_app)
             .into(binding.ivAvatar)
 
         // user login
