@@ -91,6 +91,8 @@ dependencies {
 
     implementation rootProject.ext.dependencies["stetho"]
 
+    implementation rootProject.ext.dependencies["viewpager2"]
+
     // Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"

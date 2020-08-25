@@ -2,4 +2,7 @@
 <resources>
     <dimen name="tool_bar_height">300dp</dimen>
     <dimen name="status_bar_height">22dp</dimen>
+
+    <dimen name="halfPageMargin">16dp</dimen><!-- half of distance between pages -->
+    <dimen name="peekOffset">50dp</dimen><!-- how much of adjacent pages is shown -->
 </resources>
