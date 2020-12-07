@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.FragmentGithubBinding
+import com.jeff.architecture_mvvm.util.ItemDragDropCallback
 import com.jeff.architecture_mvvm.util.autoCleared
 import com.jeff.architecture_mvvm.view.base.BaseFragment
 import com.log.JFLog
@@ -60,6 +62,36 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
         userAdapter = GitUserAdapter()
 
         binding.recyclerView.adapter = userAdapter
+
+        val itemDragDropCallback = ItemDragDropCallback()
+        val touchHelper = ItemTouchHelper(itemDragDropCallback)
+        touchHelper.attachToRecyclerView(binding.recyclerView)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            userAdapter.onRequestDrag().collectLatest {
+                touchHelper.startDrag(it)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            itemDragDropCallback.onRowMoved().collectLatest {
+                // But data not moved.
+                userAdapter.notifyItemMoved(it.first, it.second)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            itemDragDropCallback.onRowSelected().collectLatest {
+                it.itemView.setBackgroundColor(Color.LTGRAY)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            itemDragDropCallback.onRowClear().collectLatest {
+                it.itemView.setBackgroundColor(Color.TRANSPARENT)
+            }
+        }
+
 
         binding.layoutRefresh.setOnRefreshListener {
             viewModel.refresh()

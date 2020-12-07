@@ -1,6 +1,8 @@
 package com.jeff.architecture_mvvm.view.github
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
@@ -10,8 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.ItemUserInfoBinding
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.asFlow
 
 class GitUserAdapter : PagingDataAdapter<UserItem, RecyclerView.ViewHolder>(DiffCallback) {
+
+    private val onRequestDrag = BroadcastChannel<RecyclerView.ViewHolder>(Channel.BUFFERED)
+    fun onRequestDrag() = onRequestDrag.asFlow()
 
     companion object {
         val DiffCallback = object : DiffUtil.ItemCallback<UserItem>() {
@@ -40,6 +48,21 @@ class GitUserAdapter : PagingDataAdapter<UserItem, RecyclerView.ViewHolder>(Diff
             when (holder) {
                 is GitUserViewHolder -> holder.bindTo(it)
             }
+        }
+
+        setDragDrop(holder)
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setDragDrop(holder: RecyclerView.ViewHolder) {
+        val view = holder.itemView.findViewById<View>(R.id.iv_avatar)
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                onRequestDrag.offer(holder)
+            }
+
+            false
         }
     }
 }
