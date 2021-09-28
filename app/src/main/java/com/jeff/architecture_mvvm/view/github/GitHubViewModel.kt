@@ -4,13 +4,12 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.jeff.architecture_mvvm.callback.PagingCallback
 import com.jeff.architecture_mvvm.model.api.ApiRepository
-import com.jeff.architecture_mvvm.model.api.vo.UserItem
 import com.jeff.architecture_mvvm.paging.PagingChannelData
 import com.jeff.architecture_mvvm.view.base.BaseViewModel
 import com.jeff.architecture_mvvm.view.github.paging.UserPageRepository
 import com.log.JFLog
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -19,21 +18,29 @@ class GitHubViewModel @Inject internal constructor(
     private val apiRepository: ApiRepository
 ) : BaseViewModel() {
 
-    private val clearListChannel = Channel<Unit>(Channel.CONFLATED)
+    private val clearListChannel = MutableSharedFlow<Unit>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
-    private val requestChannel = Channel<PagingChannelData>(Channel.CONFLATED)
+    private val requestChannel = MutableSharedFlow<PagingChannelData>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     fun initLoad() {
-        requestChannel.offer(PagingChannelData.Load)
+        requestChannel.tryEmit(PagingChannelData.Load)
     }
 
     fun refresh() {
-        requestChannel.offer(PagingChannelData.Load)
+        requestChannel.tryEmit(PagingChannelData.Load)
     }
 
     fun clear() {
-        requestChannel.offer(PagingChannelData.Clear)
-        // clearListChannel.offer(Unit)
+        requestChannel.tryEmit(PagingChannelData.Clear)
+        // clearListChannel.tryEmit(Unit)
     }
 
     private val pagingConfig = PagingConfig(
@@ -69,7 +76,7 @@ class GitHubViewModel @Inject internal constructor(
 
     private val gitPagingRepository by lazy { UserPageRepository(apiRepository, pagingConfig, callback) }
 
-    fun getSimplePageList() = requestChannel.receiveAsFlow().flatMapLatest {
+    fun getSimplePageList() = requestChannel.flatMapLatest {
         gitPagingRepository.postData(it)
     }
 
@@ -79,10 +86,10 @@ class GitHubViewModel @Inject internal constructor(
      */
     fun getPageList() =
         flowOf(
-            clearListChannel.consumeAsFlow().map {
-                PagingData.empty<UserItem>()
+            clearListChannel.map {
+                PagingData.empty()
             },
-            requestChannel.consumeAsFlow().flatMapLatest {
+            requestChannel.flatMapLatest {
                 gitPagingRepository.postData(it)
             }
         ).flattenMerge(2)

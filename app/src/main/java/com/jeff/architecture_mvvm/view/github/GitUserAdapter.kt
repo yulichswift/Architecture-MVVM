@@ -12,17 +12,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.ItemUserInfoBinding
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import java.lang.ref.WeakReference
 
 class GitUserAdapter : PagingDataAdapter<UserItem, RecyclerView.ViewHolder>(DiffCallback) {
 
-    private val onRequestDrag = BroadcastChannel<RecyclerView.ViewHolder>(Channel.BUFFERED)
-    fun onRequestDrag() = onRequestDrag.asFlow()
+    private val onRequestDrag = MutableSharedFlow<WeakReference<RecyclerView.ViewHolder>>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
+
+    fun onRequestDrag(): SharedFlow<WeakReference<RecyclerView.ViewHolder>> = onRequestDrag
 
     companion object {
-        val DiffCallback = object : DiffUtil.ItemCallback<UserItem>() {
+        private val DiffCallback = object : DiffUtil.ItemCallback<UserItem>() {
             override fun areItemsTheSame(oldItem: UserItem, newItem: UserItem): Boolean {
                 return oldItem.id == newItem.id
             }
@@ -59,7 +65,7 @@ class GitUserAdapter : PagingDataAdapter<UserItem, RecyclerView.ViewHolder>(Diff
 
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                onRequestDrag.offer(holder)
+                onRequestDrag.tryEmit(WeakReference(holder))
             }
 
             false

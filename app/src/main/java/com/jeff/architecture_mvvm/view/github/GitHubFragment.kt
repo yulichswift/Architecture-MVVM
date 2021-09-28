@@ -6,8 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import com.jeff.architecture_mvvm.R
 import com.jeff.architecture_mvvm.databinding.FragmentGithubBinding
@@ -67,31 +69,38 @@ class GitHubFragment : BaseFragment<FragmentGithubBinding>() {
         val touchHelper = ItemTouchHelper(itemDragDropCallback)
         touchHelper.attachToRecyclerView(binding.recyclerView)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            userAdapter.onRequestDrag().collectLatest {
-                touchHelper.startDrag(it)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                userAdapter.onRequestDrag().collectLatest {
+                    it.get()?.let(touchHelper::startDrag)
+                }
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            itemDragDropCallback.onRowMoved().collectLatest {
-                // But data not moved.
-                userAdapter.notifyItemMoved(it.first, it.second)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                itemDragDropCallback.onRowMoved().collectLatest {
+                    // But data not moved.
+                    userAdapter.notifyItemMoved(it.first, it.second)
+                }
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            itemDragDropCallback.onRowSelected().collectLatest {
-                it.itemView.setBackgroundColor(Color.LTGRAY)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                itemDragDropCallback.onRowSelected().collectLatest {
+                    it.get()?.itemView?.setBackgroundColor(Color.LTGRAY)
+                }
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            itemDragDropCallback.onRowClear().collectLatest {
-                it.itemView.setBackgroundColor(Color.TRANSPARENT)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                itemDragDropCallback.onRowClear().collectLatest {
+                    it.get()?.itemView?.setBackgroundColor(Color.TRANSPARENT)
+                }
             }
         }
-
 
         binding.layoutRefresh.setOnRefreshListener {
             viewModel.refresh()
