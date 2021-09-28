@@ -1,6 +1,5 @@
 package com.jeff.architecture_mvvm.view.github
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.jeff.architecture_mvvm.callback.PagingCallback
@@ -10,10 +9,13 @@ import com.jeff.architecture_mvvm.paging.PagingChannelData
 import com.jeff.architecture_mvvm.view.base.BaseViewModel
 import com.jeff.architecture_mvvm.view.github.paging.UserPageRepository
 import com.log.JFLog
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import javax.inject.Inject
 
-class GitHubViewModel @ViewModelInject constructor(
+@HiltViewModel
+class GitHubViewModel @Inject internal constructor(
     private val apiRepository: ApiRepository
 ) : BaseViewModel() {
 

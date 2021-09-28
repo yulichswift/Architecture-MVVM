@@ -6,7 +6,7 @@ import com.jeff.architecture_mvvm.model.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -16,8 +16,8 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
-object ApiModule {
+@InstallIn(SingletonComponent::class)
+class ApiModule {
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
