@@ -1,6 +1,7 @@
 package com.jeff.architecture_mvvm.view.github.paging
 
 import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.jeff.architecture_mvvm.callback.PagingCallback
 import com.jeff.architecture_mvvm.model.api.ApiRepository
 import com.jeff.architecture_mvvm.model.api.vo.UserItem
@@ -41,6 +42,22 @@ class UserDataSource constructor(
             pagingCallback.onThrowable(e)
             pagingCallback.onLoaded()
             return LoadResult.Error(e)
+        }
+    }
+
+    override fun getRefreshKey(state: PagingState<String, UserItem>): String? {
+        // Try to find the page key of the closest page to anchorPosition, from
+        // either the prevKey or the nextKey, but you need to handle nullability
+        // here:
+        //  * prevKey == null -> anchorPage is the first page.
+        //  * nextKey == null -> anchorPage is the last page.
+        //  * both prevKey and nextKey null -> anchorPage is the initial page, so
+        //    just return null.
+        return state.anchorPosition?.let { anchorPosition ->
+            state.closestPageToPosition(anchorPosition)?.let {
+                // TODO:
+                it.prevKey ?: it.nextKey
+            }
         }
     }
 }
