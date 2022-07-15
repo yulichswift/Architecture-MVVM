@@ -16,8 +16,8 @@ class UserPageRepository(
 ) : PagingRepository<UserItem>() {
     override fun postData(data: PagingChannelData): Flow<PagingData<UserItem>> {
         return when (data) {
-           PagingChannelData.Clear -> flowOf(PagingData.empty())
-           PagingChannelData.Load -> Pager(pagingConfig) {
+            PagingChannelData.Clear -> flowOf(PagingData.empty())
+            PagingChannelData.Load -> Pager(pagingConfig) {
                 UserDataSource(
                     apiRepository,
                     pagingCallback,
